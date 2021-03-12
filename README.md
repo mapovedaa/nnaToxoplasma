@@ -25,7 +25,6 @@ En mi caso estoy trabajando en ArchLinux, con una version del paquete Conda, lla
 La version de Python es la 3.7
 
 Tengo ubicado los archivos en $HOME/Documents/tesis.
-Queda pendiente pasarlos a las carpetas de proyecto de Miniconda
 
 
 ## Configure
