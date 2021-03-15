@@ -5,24 +5,29 @@ import numpy  as np
 
 # Gráficos
 # ==============================================================================
-import matplotlib.pyplot as plt
-from matplotlib import style
-import seaborn as sns
+import matplotlib.pyplot as     plt
+import matplotlib.ticker as     ticker
+from   matplotlib        import style
+import seaborn           as     sns
 
 # Preprocesado y modelado
 # ==============================================================================
-from   sklearn.model_selection  import train_test_split
-from   sklearn.metrics          import accuracy_score
-from   sklearn.metrics          import plot_confusion_matrix
-from   sklearn.metrics          import mean_squared_error
-from   sklearn.linear_model     import LinearRegression
-from   sklearn.linear_model     import LogisticRegression
-from   sklearn.linear_model     import Ridge
-from   sklearn.linear_model     import Lasso
-from   sklearn.linear_model     import ElasticNet
-from   sklearn.linear_model     import RidgeCV
-from   sklearn.linear_model     import LassoCV
-from   sklearn.linear_model     import ElasticNetCV
+from   sklearn.feature_selection    import VarianceThreshold
+from   sklearn.model_selection      import train_test_split
+from   sklearn.metrics              import accuracy_score
+from   sklearn.metrics              import plot_confusion_matrix
+from   sklearn.metrics              import mean_squared_error
+from   sklearn.linear_model         import LinearRegression
+from   sklearn.linear_model         import LogisticRegression
+from   sklearn.linear_model         import Ridge
+from   sklearn.linear_model         import Lasso
+from   sklearn.linear_model         import RidgeCV
+from   sklearn.linear_model         import LassoCV
+from   sklearn.neural_network       import MLPClassifier
+from   sklearn.impute               import SimpleImputer
+from   sklearn.preprocessing        import StandardScaler
+from   sklearn.compose              import ColumnTransformer
+from   sklearn.pipeline             import Pipeline
 import statsmodels.api          as     sm
 import statsmodels.formula.api  as     smf
 
@@ -45,8 +50,10 @@ def extractDataCSV(csv,columnName):
 
     return X,y
 
-def removeAtipicalData(X, rangeMinimun):
-    return X[X.columns[X.sum()>rangeMinimun]]
+def removeAtipicalData(X, umbral,exp_min_gen):
+    sel = VarianceThreshold(threshold=(umbral * (1 - umbral)))
+    sel.fit_transform(X)
+    return X[X.columns[sel.get_support(indices=True)]]
 
 def configCSV(csv):
     csvConfig               = csv.transpose()
@@ -79,17 +86,46 @@ def tidy_corr_matrix(corr_mat):
     corr_mat['abs_r'] = np.abs(corr_mat['r'])
 
     return(corr_mat)
-def varNumericas(dataset, includes):
-    return dataset.select_dtypes(include=includes).describe()
 
+def heatmapCorrMatrix(corr_matrix):
+    # Heatmap matriz de correlaciones
+    # ========================================================
+    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(4, 4))
+
+    sns.heatmap(
+        corr_matrix,
+        annot     = True,
+        cbar      = False,
+        annot_kws = {"size": 6},
+        vmin      = -1,
+        vmax      = 1,
+        center    = 0,
+        cmap      = sns.diverging_palette(20, 220, n=200),
+        square    = True,
+        ax        = ax
+    )
+    ax.set_xticklabels(
+        ax.get_xticklabels(),
+        rotation = 45,
+        horizontalalignment = 'right',
+    )
+
+    ax.tick_params(labelsize = 8)
+    plt.show()
+
+    return corr_matrix
 def distVarNumericas(dataset, includes):
     # Gráfico de distribución para cada variable numérica
-    # ==============================================================================
+    # ================================================================
     # Ajustar número de subplots en función del número de columnas
-    fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(9, 5))
-    axes = axes.flat
     columnas_numeric = dataset.select_dtypes(include=includes).columns
-    columnas_numeric = columnas_numeric.drop('infectados')
+    columnas_numeric = columnas_numeric.drop('infected')
+
+    nrows = round(len(columnas_numeric)/5)+1
+
+
+    fig, axes = plt.subplots(nrows=nrows, ncols=5, figsize=(9, 5))
+    axes = axes.flat
 
     for i, colum in enumerate(columnas_numeric):
         sns.histplot(
@@ -106,11 +142,39 @@ def distVarNumericas(dataset, includes):
         axes[i].tick_params(labelsize = 6)
         axes[i].set_xlabel("")
 
-        fig.tight_layout()
-        plt.subplots_adjust(top = 0.9)
-        fig.suptitle('Distribución variables numéricas', fontsize = 10, fontweight = "bold")
+    fig.tight_layout()
+    plt.subplots_adjust(top = 0.9)
+    fig.suptitle('Distribución variables numéricas', fontsize = 10, fontweight = "bold")
 
-        print(plt)
+    plt.show()
+
+    # Se eliminan los axes vacíos
+    for i in [nrows]:
+        fig.delaxes(axes[i])
+
+    for i, colum in enumerate(columnas_numeric):
+        sns.regplot(
+            x           = dataset[colum],
+            y           = dataset['infected'],
+            color       = "gray",
+            marker      = '.',
+            scatter_kws = {"alpha":0.4},
+            line_kws    = {"color":"r","alpha":0.7},
+            ax          = axes[i]
+        )
+        axes[i].set_title(f"infected vs {colum}", fontsize = 7, fontweight = "bold")
+        axes[i].yaxis.set_major_formatter(ticker.EngFormatter())
+        axes[i].xaxis.set_major_formatter(ticker.EngFormatter())
+        axes[i].tick_params(labelsize = 6)
+        axes[i].set_xlabel("")
+        axes[i].set_ylabel("")
+
+    fig.tight_layout()
+    plt.subplots_adjust(top=0.9)
+    fig.suptitle('Correlación con precio', fontsize = 10, fontweight = "bold")
+    plt.show()
+
+    return dataset
 #===========================================================================
 def analisisExploratorio(dataset):
     print(dataset.isna().sum().sort_values())
@@ -136,8 +200,8 @@ def analisisExploratorio(dataset):
     fig.tight_layout()
     plt.show()
 
-    print(varNumericas(dataset,['float64', 'int']))
-    distVarNumericas(dataset,['float64', 'int'])
+    print(dataset.select_dtypes(include=['float64', 'int']).describe())
+    return dataset
 
 def valorOptimoAlpha(type, X, y, X_test, y_test, X_train, y_train):
     # Creación y entrenamiento del modelo (con búsqueda por CV del valor óptimo alpha)
@@ -150,7 +214,7 @@ def valorOptimoAlpha(type, X, y, X_test, y_test, X_train, y_train):
                         store_cv_values = True                    )
     elif (type == 'Lasso'):
         # Por defecto LassoCV utiliza el mean squared error
-        model = LassoCV(lphas       = np.logspace(-10, 3, 200),
+        model = LassoCV(alphas      = np.logspace(-10, 3, 200),
                         normalize   = True                    ,
                         cv          = 10                      )
 
@@ -412,24 +476,63 @@ def regresionLogisticaSimple(X, y, X_test, y_test, X_train, y_train):
     print(confusion_matrix)
     return accuracy, confusion_matrix
 
+def multiLayerPerceptron(X_test, y_test, X_train, y_train):
+    clf = MLPClassifier(solver              ='lbfgs',
+                        alpha               =1e-5   ,
+                        hidden_layer_sizes  =(45,31,27,25,23,22,11,5,3,),
+                        random_state=1              )
+    clf = clf.fit(X_train, y_train)
+    clf.predict_proba(X_test)
+    # Accuracy de test del modelo
+    # ==============================================================================
+    predicTest = clf.predict(X_test)
+    accuracy = 100*clf.score(X_test, y_test)
+    print(f"El accuracy de test es: {accuracy}%")
+
+    return accuracy
 #===========================================================================
-pathCSV = str(input("please, put path file csv"))
+pathCSV = str(input("please, put path file csv : "))
 csv = readFile(pathCSV)
 dataset = configCSV(csv)
 
-analisisExploratorio(dataset)
+X, y    = extractDataCSV(dataset, 'infected')
+X       = removeAtipicalData(X, .8 ,0)
 
+#analisisExploratorio(dataset)
+#distVarNumericas(dataset, ['float64', 'int'])
+
+#corr_matrix = dataset.select_dtypes(include=['float64', 'int']).corr(method='pearson')
+#heatmapCorrMatrix(corr_matrix)
+
+# Transformaciones para las variables numéricas
+numeric_cols = X.select_dtypes(include=['float64', 'int']).columns.to_list()
+numeric_transformer = Pipeline(
+                        steps=[ ('imputer', SimpleImputer(strategy='median')),
+                                ('scaler',  StandardScaler()                )])
+
+preprocessor = ColumnTransformer(
+                    transformers=[
+                        ('numeric', numeric_transformer, numeric_cols),
+                    ],
+                    remainder='passthrough'
+                )
+
+X_prep = preprocessor.fit_transform(X)
+labels = np.concatenate([numeric_cols])
+X_prep = preprocessor.transform(X)
+X_prep = pd.DataFrame(X_prep, columns=labels)
 # División de los datos en train y test
 # ==============================================================================
-X, y    = extractDataCSV(dataset, 'infected')
-#X       = removeAtipicalData(X, 200 )
-
-X_train, X_test, y_train, y_test = train_test_split(X                     ,
+X_train, X_test, y_train, y_test = train_test_split(X_prep                     ,
                                                     y.values.reshape(-1,1),
                                                     train_size   = 0.7    ,
                                                     random_state = 1234   ,
                                                     shuffle      = True   )
-#regresionLogisticaSimple(X, y, X_test, y_test, X_train, y_train)
-#minimosCuadrados(X, y, X_test, y_test, X_train, y_train)
-#valorOptimoAlpha('Ridge', X, y, X_test, y_test, X_train, y_train)
-#valorOptimoAlpha('Lasso', X, y, X_test, y_test, X_train, y_train)
+
+#_ = regresionLogisticaSimple(X, y, X_test, y_test, X_train, y_train)
+#_ = minimosCuadrados(X, y, X_test, y_test, X_train, y_train)
+#_ = valorOptimoAlpha('Ridge', X, y, X_test, y_test, X_train, y_train)
+#_ = valorOptimoAlpha('Lasso', X, y, X_test, y_test, X_train, y_train)
+_ = multiLayerPerceptron(X_test, y_test, X_train, y_train)
+
+
