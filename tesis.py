@@ -477,10 +477,18 @@ def regresionLogisticaSimple(X, y, X_test, y_test, X_train, y_train):
     return accuracy, confusion_matrix
 
 def multiLayerPerceptron(X_test, y_test, X_train, y_train):
-    clf = MLPClassifier(solver              ='lbfgs',
-                        alpha               =1e-5   ,
-                        hidden_layer_sizes  =(45,31,27,25,23,22,11,5,3,),
-                        random_state=1              )
+    lr      = 1e-2
+    alpha   = 1e-3
+    hls     = (45,12,6,3,)
+
+    clf = MLPClassifier(solver              = 'adam',
+                        learning_rate_init  = lr   ,
+                        alpha               = alpha,
+                        hidden_layer_sizes  = hls  ,
+                        verbose             = True ,
+                        n_iter_no_change    = 1000 ,
+                        max_iter            = 1000 ,
+                        random_state        = 1    )
     clf = clf.fit(X_train, y_train)
     clf.predict_proba(X_test)
     # Accuracy de test del modelo
@@ -491,7 +499,7 @@ def multiLayerPerceptron(X_test, y_test, X_train, y_train):
 
     return accuracy
 #===========================================================================
-pathCSV = str(input("please, put path file csv : "))
+pathCSV = str(input("please, put path file csv (default = data.csv): ") or "data.csv")
 csv = readFile(pathCSV)
 dataset = configCSV(csv)
 
