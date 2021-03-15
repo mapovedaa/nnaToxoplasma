@@ -91,9 +91,9 @@ def valorOptimoAlpha(type, X, y, X_test, y_test, X_train, y_train):
                         store_cv_values = True                    )
     elif (type == 'Lasso'):
         # Por defecto LassoCV utiliza el mean squared error
-        model = LassoCV(   alphas          = np.logspace(-10, 3, 200),
-                            normalize       = True                   ,
-                            cv              = 10                     )
+        model = LassoCV(lphas       = np.logspace(-10, 3, 200),
+                        normalize   = True                    ,
+                        cv          = 10                      )
 
     _ = model.fit(X = X_train, y = y_train)
     # Evolución de los coeficientes en función de alpha
