@@ -52,6 +52,7 @@ def configCSV(csv):
     csvConfig               = csv.transpose()
     csvConfig.columns       = csvConfig.iloc[0].values
     csvConfig               = csvConfig.drop(csvConfig.index[0])
+    csvConfig               = csvConfig.astype(float)
     csvConfig               = csvConfig.assign(state=csvConfig.index.values)
     csvConfig               = csvConfig.reset_index(drop=True)
     csvConfig["infected"]   = np.where(csvConfig["state"].str.contains("Chronico"), 1, 0)
@@ -79,7 +80,66 @@ def tidy_corr_matrix(corr_mat):
     corr_mat['abs_r'] = np.abs(corr_mat['r'])
 
     return(corr_mat)
+def varNumericas(dataset, includes):
+    return dataset.select_dtypes(include=includes).describe()
+
+def distVarNumericas(dataset, includes):
+    # Gráfico de distribución para cada variable numérica
+    # ==============================================================================
+    # Ajustar número de subplots en función del número de columnas
+    fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(9, 5))
+    axes = axes.flat
+    columnas_numeric = dataset.select_dtypes(include=includes).columns
+    columnas_numeric = columnas_numeric.drop('infectados')
+
+    for i, colum in enumerate(columnas_numeric):
+        sns.histplot(
+            data    = dataset,
+            x       = colum,
+            stat    = "count",
+            kde     = True,
+            color   = (list(plt.rcParams['axes.prop_cycle'])*2)[i]["color"],
+            line_kws= {'linewidth': 2},
+            alpha   = 0.3,
+            ax      = axes[i]
+        )
+        axes[i].set_title(colum, fontsize = 7, fontweight = "bold")
+        axes[i].tick_params(labelsize = 6)
+        axes[i].set_xlabel("")
+
+        fig.tight_layout()
+        plt.subplots_adjust(top = 0.9)
+        fig.suptitle('Distribución variables numéricas', fontsize = 10, fontweight = "bold")
+
+        print(plt)
 #===========================================================================
+def analisisExploratorio(dataset):
+    print(dataset.isna().sum().sort_values())
+    print("Número de observaciones por clase")
+    print(dataset['infected'].value_counts())
+    print("#=====================================")
+    print("Porcentaje de observaciones por clase")
+    print(100 * dataset['infected'].value_counts(normalize=True))
+
+    fig, axes = plt.subplots(nrows=3, ncols=1, figsize=(6, 6))
+    sns.distplot(
+        dataset.infected,
+        hist    = False,
+        rug     = True,
+        color   = "blue",
+        kde_kws = {'shade': True, 'linewidth': 1},
+        ax      = axes[0]
+    )
+    axes[0].set_title("Distribución original", fontsize = 'medium')
+    axes[0].set_xlabel('Infectados', fontsize='small')
+    axes[0].tick_params(labelsize = 6)
+
+    fig.tight_layout()
+    plt.show()
+
+    print(varNumericas(dataset,['float64', 'int']))
+    distVarNumericas(dataset,['float64', 'int'])
+
 def valorOptimoAlpha(type, X, y, X_test, y_test, X_train, y_train):
     # Creación y entrenamiento del modelo (con búsqueda por CV del valor óptimo alpha)
     # ==============================================================================
@@ -358,17 +418,12 @@ def regresionLogisticaSimple(X, y, X_test, y_test, X_train, y_train):
 csv = readFile('/home/mike/Documents/tesis/nnaToxoplasma/data.csv')
 dataset = configCSV(csv)
 
+analisisExploratorio(dataset)
+
 # División de los datos en train y test
 # ==============================================================================
 X, y    = extractDataCSV(dataset, 'infected')
-X       = removeAtipicalData(X, 200 )
-
-print(X.head(3))
-print("Número de observaciones por clase")
-print(dataset['infected'].value_counts())
-print("#=====================================")
-print("Porcentaje de observaciones por clase")
-print(100 * dataset['infected'].value_counts(normalize=True))
+#X       = removeAtipicalData(X, 200 )
 
 X_train, X_test, y_train, y_test = train_test_split(X                     ,
                                                     y.values.reshape(-1,1),
@@ -378,4 +433,4 @@ X_train, X_test, y_train, y_test = train_test_split(X                     ,
 #regresionLogisticaSimple(X, y, X_test, y_test, X_train, y_train)
 #minimosCuadrados(X, y, X_test, y_test, X_train, y_train)
 #valorOptimoAlpha('Ridge', X, y, X_test, y_test, X_train, y_train)
-valorOptimoAlpha('Lasso', X, y, X_test, y_test, X_train, y_train)
+#valorOptimoAlpha('Lasso', X, y, X_test, y_test, X_train, y_train)
