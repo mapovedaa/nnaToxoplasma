@@ -61,7 +61,6 @@ def configCSV(csv):
     return csvConfig
 
 def readFile(pathFile):
-    pathFile  = "/home/mike/Documents/tesis/nnaToxoplasma/data.csv"
     df_comma  = pd.read_csv(pathFile, nrows=1,sep=",")
     df_semi   = pd.read_csv(pathFile, nrows=1, sep=";")
     csv       = pd.DataFrame
@@ -414,8 +413,8 @@ def regresionLogisticaSimple(X, y, X_test, y_test, X_train, y_train):
     return accuracy, confusion_matrix
 
 #===========================================================================
-
-csv = readFile('/home/mike/Documents/tesis/nnaToxoplasma/data.csv')
+pathCSV = str(input("please, put path file csv"))
+csv = readFile(pathCSV)
 dataset = configCSV(csv)
 
 analisisExploratorio(dataset)
