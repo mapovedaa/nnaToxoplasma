@@ -63,7 +63,7 @@ def configCSV(csv):
     csvConfig               = csvConfig.assign(state=csvConfig.index.values)
     csvConfig               = csvConfig.reset_index(drop=True)
     csvConfig["infected"]   = np.where(csvConfig["state"].str.contains("Chronico"), 1, 0)
-    csvConfig               = csvConfig.drop(columns=["state"])
+    csvConfig               = csvConfig.drop(columns=["state"x])
 
     return csvConfig
 
@@ -111,6 +111,9 @@ def heatmapCorrMatrix(corr_matrix):
     )
 
     ax.tick_params(labelsize = 8)
+    fig.tight_layout()
+    plt.subplots_adjust(top=0.9)
+    fig.suptitle('Correlación con precio', fontsize = 10, fontweight = "bold")
     plt.show()
 
     return corr_matrix
@@ -497,6 +500,12 @@ def multiLayerPerceptron(X_test, y_test, X_train, y_train):
     accuracy = 100*clf.score(X_test, y_test)
     print(f"El accuracy de test es: {accuracy}%")
 
+    confusion_matrix = pd.crosstab( y_test.ravel()         ,
+                                    predicTest              ,
+                                    rownames=['Real']      ,
+                                    colnames=['Predicción'])
+    print(confusion_matrix)
+    heatmapCorrMatrix(confusion_matrix)
     return accuracy
 #===========================================================================
 pathCSV = str(input("please, put path file csv (default = data.csv): ") or "data.csv")
@@ -531,7 +540,7 @@ X_prep = preprocessor.transform(X)
 X_prep = pd.DataFrame(X_prep, columns=labels)
 # División de los datos en train y test
 # ==============================================================================
-X_train, X_test, y_train, y_test = train_test_split(X_prep                     ,
+X_train, X_test, y_train, y_test = train_test_split(X_prep                ,
                                                     y.values.reshape(-1,1),
                                                     train_size   = 0.7    ,
                                                     random_state = 1234   ,
@@ -541,6 +550,5 @@ X_train, X_test, y_train, y_test = train_test_split(X_prep                     ,
 #_ = minimosCuadrados(X, y, X_test, y_test, X_train, y_train)
 #_ = valorOptimoAlpha('Ridge', X, y, X_test, y_test, X_train, y_train)
 #_ = valorOptimoAlpha('Lasso', X, y, X_test, y_test, X_train, y_train)
-_ = multiLayerPerceptron(X_test, y_test, X_train, y_train)
-
+#_ = multiLayerPerceptron(X_test, y_test, X_train, y_train)
 
