@@ -76,11 +76,11 @@ def main():
                                                         train_size   = 0.7    ,
                                                         random_state = 1234   ,
                                                         shuffle      = True   )
-    X_train['state'] = y_train
     X_train.to_csv('./data/training.csv', index=False)
+    y_train.to_csv('./data/result_training.csv', index=False)
 
-    X_test['state'] = y_test
     X_test.to_csv('./data/testing.csv', index=False)
+    y_test.to_csv('./data/result_testing.csv', index=False)
 
 if __name__ == "__main__":
     main()
