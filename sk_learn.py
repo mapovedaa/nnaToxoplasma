@@ -77,8 +77,6 @@ def multiLayerPerceptron(X_test, y_test, X_train, y_train, lr, alpha, hls):
                                     predicTest              ,
                                     rownames=['Real']      ,
                                     colnames=['Predicción'])
-    print(confusion_matrix)
-
     return accuracy
 
 def main():
