@@ -114,10 +114,10 @@ X_prep = preprocessor.transform(X)
 X_prep = pd.DataFrame(X_prep, columns=labels)
 # División de los datos en train y test
 # ==============================================================================
-#X_train, X_test, y_train, y_test = train_test_split(X_prep                ,
-#                                                    y.values.reshape(-1,1),
-#                                                    train_size   = 0.7    ,
-#                                                    random_state = 1234   ,
-#                                                    shuffle      = True   )
+X_train, X_test, y_train, y_test = train_test_split(X_prep                ,
+                                                    y.values.reshape(-1,1),
+                                                    train_size   = 0.7    ,
+                                                    random_state = 1234   ,
+                                                    shuffle      = True   )
 
-#_ = multiLayerPerceptron(X_test, y_test, X_train, y_train, 1e-2, 1e-3, (45,12,6,3,))
+_ = multiLayerPerceptron(X_test, y_test, X_train, y_train, 1e-2, 1e-3, (45,12,6,3,))
