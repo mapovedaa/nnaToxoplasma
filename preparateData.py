@@ -77,10 +77,10 @@ def main():
                                                         random_state = 1234   ,
                                                         shuffle      = True   )
     X_train.to_csv('./data/training.csv', index=False)
-    y_train.to_csv('./data/result_training.csv', index=False)
+    np.savetxt('./data/result_training.csv', y_train, delimiter=",")
 
     X_test.to_csv('./data/testing.csv', index=False)
-    y_test.to_csv('./data/result_testing.csv', index=False)
+    np.savetxt('./data/result_testing.csv', y_test, delimiter=",")
 
 if __name__ == "__main__":
     main()
