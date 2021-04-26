@@ -1,5 +1,6 @@
 import numpy  as np
 import pandas as pd
+import os
 
 from   sklearn.feature_selection    import VarianceThreshold
 from   sklearn.compose              import ColumnTransformer
@@ -44,7 +45,8 @@ def readFile(pathFile):
     return csv
 
 def main():
-    pathCSV = str(input("please, put path file csv (default = data.csv): ") or "data.csv")
+    dirname = os.path.dirname(os.path.abspath(__file__))
+    pathCSV = str(input("please, put path file csv (default = data.csv): ") or dirname+"/data.csv")
 
     csv = readFile(pathCSV)
     dataset = configCSV(csv)
@@ -77,9 +79,11 @@ def main():
                                                         random_state = 1234   ,
                                                         shuffle      = True   )
     X_train.to_csv('./data/training.csv', index=False)
+    y_train = np.append(-1, y_train)
     np.savetxt('./data/result_training.csv', y_train, delimiter=",")
 
     X_test.to_csv('./data/testing.csv', index=False)
+    y_test = np.append(-1, y_test)
     np.savetxt('./data/result_testing.csv', y_test, delimiter=",")
 
 if __name__ == "__main__":
