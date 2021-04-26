@@ -1,0 +1,29 @@
+{
+  "name": "mlp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx tsc && node ./main.js",
+    "toxo": "npx tsc && node ./toxo.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/chart.js": "^2.9.31",
+    "@types/node": "^8.10.66",
+    "chart.js": "^2.9.4",
+    "chartjs-node-canvas": "^3.1.0",
+    "fs": "*",
+    "typescript": "^4.2.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paulomenezes/mlp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/paulomenezes/mlp/issues"
+  },
+  "homepage": "https://github.com/paulomenezes/mlp#readme",
+  "description": ""
+}
