@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\dataset">
+      <UniqueIdentifier>{4b84102a-fc4b-476e-b765-ef9c6ff237c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\misc">
+      <UniqueIdentifier>{7c2b65fa-6d4e-4dca-b657-842e34c7f0c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\neural">
+      <UniqueIdentifier>{e115eaff-c3ac-4673-861a-000b3f24d542}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\optimizer">
+      <UniqueIdentifier>{46818690-e78c-4767-8f13-efce2cf43205}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\misc">
+      <UniqueIdentifier>{eeb471af-02ef-4c65-82ce-09adc6c63f8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\neural">
+      <UniqueIdentifier>{d6a12994-86ad-4daf-a71b-1cc76271c9e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\dataset">
+      <UniqueIdentifier>{52bdda0c-9c01-428e-b880-2d5b738e2c24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\optimizer">
+      <UniqueIdentifier>{0dd3aa72-507a-4c30-968b-26744483dbdf}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="NeuralNetworkCPP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dataset.cpp">
+      <Filter>Source Files\dataset</Filter>
+    </ClCompile>
+    <ClCompile Include="functions.cpp">
+      <Filter>Source Files\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="neuralnetwork.cpp">
+      <Filter>Source Files\neural</Filter>
+    </ClCompile>
+    <ClCompile Include="neuron.cpp">
+      <Filter>Source Files\neural</Filter>
+    </ClCompile>
+    <ClCompile Include="edge.cpp">
+      <Filter>Source Files\neural</Filter>
+    </ClCompile>
+    <ClCompile Include="layer.cpp">
+      <Filter>Source Files\neural</Filter>
+    </ClCompile>
+    <ClCompile Include="backpropagation.cpp">
+      <Filter>Source Files\optimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="optimizer.cpp">
+      <Filter>Source Files\optimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="shakingtree.cpp">
+      <Filter>Source Files\optimizer</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="functions.h">
+      <Filter>Header Files\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="edge.h">
+      <Filter>Header Files\neural</Filter>
+    </ClInclude>
+    <ClInclude Include="layer.h">
+      <Filter>Header Files\neural</Filter>
+    </ClInclude>
+    <ClInclude Include="neuralnetwork.h">
+      <Filter>Header Files\neural</Filter>
+    </ClInclude>
+    <ClInclude Include="neuron.h">
+      <Filter>Header Files\neural</Filter>
+    </ClInclude>
+    <ClInclude Include="dataset.h">
+      <Filter>Header Files\dataset</Filter>
+    </ClInclude>
+    <ClInclude Include="shakingtree.h">
+      <Filter>Header Files\optimizer</Filter>
+    </ClInclude>
+    <ClInclude Include="backpropagation.h">
+      <Filter>Header Files\optimizer</Filter>
+    </ClInclude>
+    <ClInclude Include="optimizer.h">
+      <Filter>Header Files\optimizer</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
